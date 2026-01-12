@@ -56,22 +56,29 @@ body {
 
 /* Message bubbles */
 .message {
-  max-width: 80%;
+  max-width: 85%;
   padding: 10px 14px;
+  margin: 8px 0;
   border-radius: 12px;
   line-height: 1.5;
-  word-wrap: break-word;
+  font-size: 14px;
 }
 
 .message.user {
   align-self: flex-end;
-  background: var(--bg-user);
+  background: #2563eb;
+  color: white;
+  border-bottom-right-radius: 4px;
 }
 
 .message.bot {
   align-self: flex-start;
-  background: var(--bg-bot);
+  background: #1f2937;
+  color: #e5e7eb;
+  border-bottom-left-radius: 4px;
+  white-space: pre-wrap;
 }
+
 
 /* Input */
 .input-area {
