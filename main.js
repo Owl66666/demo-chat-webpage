@@ -1,45 +1,66 @@
-const res = await fetch("https://demo-chat-worker.zchong517.workers.dev/", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ message: text }),
+const input = document.getElementById("input");
+const sendBtn = document.getElementById("send");
+const messages = document.getElementById("messages");
+
+// 点击发送
+sendBtn.addEventListener("click", sendMessage);
+
+// Enter 发送，Shift+Enter 换行
+input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
 });
 
-const reader = res.body.getReader();
-const decoder = new TextDecoder("utf-8");
+async function sendMessage() {
+  const text = input.value.trim();
+  if (!text) return;
 
-let buffer = "";
-let assistantText = "";
+  input.value = "";
+  sendBtn.disabled = true;
 
-while (true) {
-  const { value, done } = await reader.read();
-  if (done) break;
+  // 用户消息
+  addMessage(text, "user");
 
-  buffer += decoder.decode(value, { stream: true });
+  // AI 消息占位
+  const botMsgEl = addMessage("", "bot");
 
-  // 按 SSE 事件拆分
-  const lines = buffer.split("\n");
-  buffer = lines.pop(); // 留下未完整的一行
+  try {
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text }),
+    });
 
-  for (const line of lines) {
-    if (!line.startsWith("data:")) continue;
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder("utf-8");
 
-    const data = line.replace("data:", "").trim();
+    let buffer = "";
 
-    if (data === "[DONE]") {
-      return;
-    }
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
 
-    try {
-      const json = JSON.parse(data);
-      const delta = json.choices?.[0]?.delta?.content;
+      buffer += decoder.decode(value, { stream: true });
 
-      if (delta) {
-        assistantText += delta;
-        botDiv.textContent = assistantText;
-        chat.scrollTop = chat.scrollHeight;
-      }
-    } catch (e) {
-      console.error("JSON parse error:", data);
-    }
-  }
-}
+      // SSE 以 \n\n 分隔事件
+      const events = buffer.split("\n\n");
+      buffer = events.pop(); // 未完整部分留到下次
+
+      for (const event of events) {
+        const line = event.trim();
+
+        if (!line.startsWith("data:")) continue;
+
+        const data = line.replace(/^data:\s*/, "");
+
+        if (data === "[DONE]") {
+          sendBtn.disabled = false;
+          return;
+        }
+
+        try {
+          const json = JSON.parse(data);
+          const delta = json.choices?.[0]?.delta?.content;
+          if (d
