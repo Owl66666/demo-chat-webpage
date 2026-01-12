@@ -1,41 +1,56 @@
-const chat = document.getElementById("chat");
-const input = document.getElementById("messageInput");
-const sendBtn = document.getElementById("sendBtn");
+const messagesEl = document.getElementById("messages");
+const inputEl = document.getElementById("input");
+const sendBtn = document.getElementById("send");
 
-function addMessage(text, role) {
+const WORKER_URL =
+  "https://demo-chat-worker.zchong517.workers.dev/";
+
+function addMessage(role, text = "") {
   const div = document.createElement("div");
-  div.className = `message ${role}`;
+  div.className = "message " + role;
   div.textContent = text;
-  chat.appendChild(div);
-  chat.scrollTop = chat.scrollHeight;
+  messagesEl.appendChild(div);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+  return div;
 }
 
 async function sendMessage() {
-  const text = input.value.trim();
+  const text = inputEl.value.trim();
   if (!text) return;
 
-  addMessage(text, "user");
-  input.value = "";
+  inputEl.value = "";
+  sendBtn.disabled = true;
 
-  try {
-    // TODO: 替换为你的 Worker API
-    const res = await fetch("https://demo-chat-worker.zchong517.workers.dev/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ message: text }),
-    });
+  addMessage("user", text);
+  const botDiv = addMessage("bot", "");
 
-    const data = await res.json();
-    addMessage(data.reply || "（无返回）", "bot");
-  } catch (e) {
-    addMessage("请求失败，请检查 API", "bot");
+  const resp = await fetch(WORKER_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: text }),
+  });
+
+  const reader = resp.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    botDiv.textContent = buffer;
+    messagesEl.scrollTop = messagesEl.scrollHeight;
   }
+
+  sendBtn.disabled = false;
 }
 
-sendBtn.addEventListener("click", sendMessage);
+sendBtn.onclick = sendMessage;
 
-input.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") sendMessage();
+inputEl.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
 });

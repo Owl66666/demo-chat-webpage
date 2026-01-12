@@ -3,31 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chat Demo</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>AI Chat Demo</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="./style.css" />
 </head>
+
 <body>
-  <div class="app">
-    <header class="header">
-      <h1>Chat Demo</h1>
-      <span class="subtitle">Powered by Worker API</span>
-    </header>
+  <div class="chat-container">
+    <div class="chat-header">AI Chat</div>
 
-    <main class="chat-container" id="chat">
-      <!-- 消息会动态插入 -->
-    </main>
+    <div id="messages" class="chat-messages"></div>
 
-    <footer class="input-area">
-      <input
-        type="text"
-        id="messageInput"
-        placeholder="输入你的消息…"
-        autocomplete="off"
-      />
-      <button id="sendBtn">发送</button>
-    </footer>
+    <div class="chat-input">
+      <textarea id="input" rows="2" placeholder="输入你的问题…"></textarea>
+      <button id="send">发送</button>
+    </div>
   </div>
 
-  <script src="main.js"></script>
+  <!-- JS -->
+  <script src="./main.js"></script>
 </body>
 </html>
