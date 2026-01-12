@@ -63,4 +63,33 @@ async function sendMessage() {
         try {
           const json = JSON.parse(data);
           const delta = json.choices?.[0]?.delta?.content;
-          if (d
+          if (delta) {
+            botMsgEl.textContent += delta;
+            scrollToBottom();
+          }
+        } catch (e) {
+          // JSON 不完整时忽略
+        }
+      }
+    }
+  } catch (err) {
+    botMsgEl.textContent += "\n[请求失败]";
+    console.error(err);
+  } finally {
+    sendBtn.disabled = false;
+    input.focus();
+  }
+}
+
+function addMessage(text, role) {
+  const div = document.createElement("div");
+  div.className = `message ${role}`;
+  div.textContent = text;
+  messages.appendChild(div);
+  scrollToBottom();
+  return div;
+}
+
+function scrollToBottom() {
+  messages.scrollTop = messages.scrollHeight;
+}
