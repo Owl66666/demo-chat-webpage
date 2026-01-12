@@ -38,7 +38,7 @@ async function send() {
   add("user", text)
   input.value = ""
 
-  const res = await fetch("https://deepseek-proxy.xxx.workers.dev", {
+  const res = await fetch("https://demo-chat-worker.zchong517.workers.dev/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ message: text })
