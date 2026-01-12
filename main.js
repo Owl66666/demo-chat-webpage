@@ -19,7 +19,7 @@ async function sendMessage() {
 
   try {
     // TODO: 替换为你的 Worker API
-    const res = await fetch("https://YOUR_WORKER_URL", {
+    const res = await fetch("https://demo-chat-worker.zchong517.workers.dev/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
