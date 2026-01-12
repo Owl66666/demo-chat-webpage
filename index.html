@@ -2,10 +2,15 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- 关键：移动端 / iPad 自适应 -->
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1"
+  />
+
   <title>AI Chat Demo</title>
 
-  <!-- CSS -->
   <link rel="stylesheet" href="./style.css" />
 </head>
 
@@ -16,12 +21,15 @@
     <div id="messages" class="chat-messages"></div>
 
     <div class="chat-input">
-      <textarea id="input" rows="2" placeholder="输入你的问题…"></textarea>
+      <textarea
+        id="input"
+        rows="2"
+        placeholder="输入你的问题…"
+      ></textarea>
       <button id="send">发送</button>
     </div>
   </div>
 
-  <!-- JS -->
   <script src="./main.js"></script>
 </body>
 </html>
