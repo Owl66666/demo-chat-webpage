@@ -189,7 +189,7 @@ async function send() {
   sendBtn.disabled = true
 
   try {
-    const res = await fetch("https://你的-worker-url.workers.dev", {
+    const res = await fetch("https://demo-chat-worker.zchong517.workers.dev/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message })
